@@ -39,15 +39,18 @@ class HomeCloud(Daemon):
 						part = 0
 						f = open(mypath+file)
 						f2 = open(drive+file+'.part'+str(part),'w+')	
-						
+						#using yield and generator to reduce memory consumption, 
+						#I think.. :)
 						for piece in read_in_chunks2(f,f2):
 							counter = counter + 1
 							f2.write(piece)
+							#divide file based on MAX_FILE_SIZE
 							if ( counter >= MAX_FILE_SIZE ):
 								counter = 0
 								part = part + 1
                 	                                        f2.close()
 								f2 = open(drive+file+'.part'+str(part),'w+')
+								#useless try to clean the memory while copying
 								call(["sync"])
 								call(["sysctl", "-w", "vm.drop_caches=3"])	
 					'''shutil.copy(mypath+file, drive+file)'''
